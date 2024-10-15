@@ -8,17 +8,4 @@ import { HomeService } from './home.service';
   animations: [],
   providers: [],
 })
-export class HomeComponent {
-  json = {
-    id: 1,
-    nombre: 'Juan',
-  };
-
-  hoy = new Date();
-
-  @Input() id!: number;
-
-  // constructor(private readonly homeService: HomeService) {}
-
-  private readonly homeService = inject(HomeService);
-}
+export class HomeComponent {}

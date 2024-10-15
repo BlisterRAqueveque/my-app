@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoginService } from './login.service';
-import { firstValueFrom } from 'rxjs';
+import { LoginService, UsuarioD } from '../core/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -9,30 +8,23 @@ import { firstValueFrom } from 'rxjs';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  private readonly router = inject(Router);
+  // constructor(private readonly loginService: LoginService) {}
   private readonly loginService = inject(LoginService);
-
-  isLoading = false;
+  private readonly router = inject(Router);
+  clave!: string;
+  usuario!: string;
 
   login() {
-    this.isLoading = true;
-    this.loginService.login();
-
-    const data = firstValueFrom(this.loginService.$datos);
-
-    data.then();
-
-    this.loginService.usuario.value;
-
-    const sub = this.loginService.$datos.subscribe((data) => {
-      console.log(data);
+    const a = this.loginService.login(this.usuario, this.clave).subscribe({
+      next: (data: UsuarioD) => {
+        localStorage.setItem('usuario', JSON.stringify(data));
+      },
+      error: (e: any) => {
+        alert('Error de login ' + JSON.stringify(e));
+      },
+      complete: () => {
+        this.router.navigate(['/home']);
+      },
     });
-
-    setTimeout(() => {
-      this.isLoading = false;
-      this.router.navigate(['/home']);
-    }, 1500);
-
-    sub.unsubscribe();
   }
 }

@@ -1,9 +1,21 @@
-<div style="position: relative;">
+<div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <form class="form">
+        <p class="form-title">Sign in to your account</p>
+        <div class="input-container">
+            <input type="email" name="usuario" placeholder="Enter email" [(ngModel)]="usuario">
+            <span>
+            </span>
+        </div>
+        <div class="input-container">
+            <input type="password" name="password" placeholder="Enter password" [(ngModel)]="clave">
+        </div>
+        <button (click)="login()">
+            Sign in
+        </button>
 
-    @if(isLoading){
-    <div class="spinner">
-        <div class="loading"></div>
-    </div>
-    }
-    <button (click)="login()">Login</button>
+        <p class="signup-link">
+            No account?
+            <a href="">Sign up</a>
+        </p>
+    </form>
 </div>
