@@ -2,16 +2,21 @@
     <form class="form">
         <p class="form-title">Sign in to your account</p>
         <div class="input-container">
-            <input type="email" name="usuario" placeholder="Enter email" [(ngModel)]="usuario">
-            <span>
-            </span>
+
+            <app-input [(value)]="usuario" [type]="'text'" [placeholder]="'Ingrese usuario...'" />
+
         </div>
         <div class="input-container">
-            <input type="password" name="password" placeholder="Enter password" [(ngModel)]="clave">
+            <app-input [(value)]="clave" [type]="'password'" [showIcon]="true"
+                [placeholder]="'Ingrese contraseña...'" />
+
         </div>
-        <button (click)="login()">
-            Sign in
-        </button>
+
+        <div class="button-container">
+            <button (click)="login()">
+                Sign in
+            </button>
+        </div>
 
         <p class="signup-link">
             No account?
@@ -19,3 +24,4 @@
         </p>
     </form>
 </div>
+
