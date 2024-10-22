@@ -3,11 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { catchError, map, tap } from 'rxjs';
 
 export interface LoginResponse {
-  token: {
-    access_token: string;
-    token_type: string;
-    expires_in_ms: number;
-  };
+  token: string;
   usuario: UsuarioD;
 }
 
@@ -36,23 +32,24 @@ export class LoginService {
   //constructor(private readonly http: HttpClient) {}
   private readonly http = inject(HttpClient);
   // URL de nuestra API Rest
-  private readonly url = 'http://localhost:3030/api/';
+  private readonly url = 'http://localhost:3000/api/';
 
-  login(usuario: string, clave: string) {
+  login(email: string, pass: string) {
     const direction = this.url + 'usuarios/auth/login/';
     return this.http
-      .post<{ ok: boolean; result: LoginResponse; msg: string }>(direction, {
-        usuario,
-        clave,
+      .post<{ ok: boolean; token: string; msg: string }>(direction, {
+        email,
+        pass,
       })
       .pipe(
         catchError((e) => {
+          console.log(e);
           throw new Error(e);
         }),
         tap((data) => {
-          localStorage.setItem('x-token', data.result.token.access_token);
-        }),
-        map((data) => data.result.usuario)
+          console.log(data);
+          localStorage.setItem('x-token', data.token);
+        })
       );
   }
 }

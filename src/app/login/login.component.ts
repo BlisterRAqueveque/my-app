@@ -11,15 +11,16 @@ export class LoginComponent {
   // constructor(private readonly loginService: LoginService) {}
   private readonly loginService = inject(LoginService);
   private readonly router = inject(Router);
-  clave!: string;
-  usuario!: string;
+
+  ngOnInit() {
+    localStorage.clear();
+  }
 
   login() {
     const a = this.loginService.login(this.usuario, this.clave).subscribe({
-      next: (data: UsuarioD) => {
-        localStorage.setItem('usuario', JSON.stringify(data));
-      },
+      next: (data) => {},
       error: (e: any) => {
+        console.log(e);
         alert('Error de login ' + JSON.stringify(e));
       },
       complete: () => {
@@ -27,4 +28,7 @@ export class LoginComponent {
       },
     });
   }
+
+  usuario!: string;
+  clave!: string;
 }
