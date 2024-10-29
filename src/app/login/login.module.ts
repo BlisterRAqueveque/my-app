@@ -10,3 +10,4 @@ import { SharedModule } from '../shared/shared.module';
   imports: [CommonModule, LoginRoutingModule, FormsModule, SharedModule],
 })
 export class LoginModule {}
+
