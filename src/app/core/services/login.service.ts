@@ -1,58 +1,71 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, tap } from 'rxjs';
-
-export interface LoginResponse {
-  token: {
-    access_token: string;
-    token_type: string;
-    expires_in_ms: number;
-  };
-  usuario: UsuarioD;
-}
-
-export interface UsuarioD {
-  id: number;
-  usuario: string;
-  nombre: string;
-  apellido: string;
-  dni: number;
-  competencia: string;
-  fecha_nacimiento: Date;
-  clave: string;
-  push_token: string;
-  correo: string;
-  telefono: number;
-  localidad: string;
-  prefered_language: string;
-  activo: number;
-  fecha_hora_carga: Date;
-  imagen_perfil: string;
-  superadmin: number;
-}
+import { ResponseI } from '../models/response.model';
+import { CookieService } from 'ngx-cookie-service';
+import { TOKEN } from '../constants/service-keys';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
-  //constructor(private readonly http: HttpClient) {}
   private readonly http = inject(HttpClient);
   // URL de nuestra API Rest
-  private readonly url = 'http://localhost:3030/api/';
+  private readonly url = 'http://localhost:3000/api/';
 
-  login(usuario: string, clave: string) {
+  login(email: string, pass: string) {
     const direction = this.url + 'usuarios/auth/login/';
     return this.http
-      .post<{ ok: boolean; result: LoginResponse; msg: string }>(direction, {
-        usuario,
-        clave,
+      .post<ResponseI<string>>(direction, {
+        email,
+        pass,
       })
       .pipe(
         catchError((e) => {
           throw new Error(e);
         }),
-        tap((data) => {
-          localStorage.setItem('x-token', data.result.token.access_token);
-        }),
-        map((data) => data.result.usuario)
+        tap((data) => this.saveTokenInCookies(data)),
+        map((data) => {
+          data.result;
+        })
       );
+  }
+
+  // Inyectamos el servicio de cookies:
+  private readonly cookieService = inject(CookieService);
+  private saveTokenInCookies(data: ResponseI<string>): void {
+    // Traemos el TOKEN de las importaciones
+    this.cookieService.set(TOKEN, data.result, undefined, '/');
+    //? Después de obtener el token, redireccionamos
+    this.router.navigate(['/home']);
+  }
+  private removeUserFromCookie() {
+    // Setea la cookie como un valor vacío
+    this.cookieService.set(TOKEN, '', undefined, '/');
+  }
+
+  // Inyectamos el Router para usar las funciones que nos dejan navegar por la aplicación
+  private readonly router = inject(Router);
+  /**
+   * @description
+   * Todas las funciones para borrar las credenciales del usuario al deslogearse
+   *
+   */
+  logout() {
+    this.removeUserFromCookie();
+    // Navega al usuario al login
+    this.router.navigate(['login'], { replaceUrl: true });
+  }
+
+  /**
+   * @description
+   * Comprueba si el token es válido, o no
+   */
+  checkToken(token: string) {
+    return this.http.post<ResponseI<any>>(this.url, { token }).pipe(
+      catchError((e) => {
+        throw new Error(e);
+      }),
+      map((data) => data.ok)
+    );
   }
 }

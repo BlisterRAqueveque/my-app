@@ -1,5 +1,5 @@
-import { Component, inject, Input } from '@angular/core';
-import { HomeService } from './home.service';
+import { Component, inject } from '@angular/core';
+import { ReservasService } from '../core/services/reservas.service';
 
 @Component({
   selector: 'app-home',
@@ -8,4 +8,12 @@ import { HomeService } from './home.service';
   animations: [],
   providers: [],
 })
-export class HomeComponent {}
+export class HomeComponent {
+  private readonly reservaService = inject(ReservasService);
+
+  findAll() {
+    this.reservaService.findAll().subscribe((data) => {
+      console.log(data);
+    });
+  }
+}
